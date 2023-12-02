@@ -23,6 +23,25 @@ def DataProcessing(PandasData):
             lstOfColumns.append(PandasData.columns[i])
     PDD = PandasData.drop(lstOfColumns,axis=1)
     return PDD
+def notNeededCountry(lists):
+    lst = list(set(lists) - set(TIG_Country))
+    # for i in range(len(TIG_Country)):
+    #     ii = 0
+    #     for k in range(len(list)):
+    #         if TIG_Country[i] == list[k]:
+    #             continue
+    #         else:
+    #             ii +=1
+    #             if ii+1>len(list):
+    #                 lst.append(list[k])
+    return lst
+
+            
+def EraseNotUsableData(PandasData):
+    idx = PandasData[~(PandasData['LOCATION'].isin(TIG_Country))].index
+    pdpd = PandasData.drop(idx,axis=0)
+    return pdpd
+
 csv_TrustInGovernment = pd.read_csv("Dataset_Trust_in_government.csv")
 csv_MultifactorProductivity = pd.read_csv("Dataset_Multifactor_productivity.csv")
 csv_GrossDomesticProduct = pd.read_csv("Dataset_Gross_domestic_product.csv")
@@ -42,22 +61,29 @@ TIG_Country = CountryExtractor(csv_TrustInGovernment_np)[0]
 MP_Contry = CountryExtractor(csv_MultifactorProductivity_np)[0]
 GDP_Country = CountryExtractor(csv_GrossDomesticProduct_np)[0]
 PLI_Country = CountryExtractor(csv_PriceLevelIndices_np)[0]
-
+#MP_NotNeededCountry = 
 #print(csv_TrustInGovernment)
 #print(csv_MultifactorProductivity)
 #print(csv_GrossDomesticProduct)
 #print(csv_PriceLevelIndices)
+#print(csv_GrossDomesticProduct)
+
+#print(notNeededCountry(GDP_Country))
 
 #delete column except time,location, value
-TIG_CoulumnExtract = DataProcessing(csv_TrustInGovernment)
-MP_CoulumnExtract = DataProcessing(csv_MultifactorProductivity)
-GDP_CoulumnExtract = DataProcessing(csv_GrossDomesticProduct)
-PLI_CoulumnExtract = DataProcessing(csv_PriceLevelIndices)
+#TIG_CoulumnExtract = EraseNotUsableData(csv_TrustInGovernment,TIG_Country)
+#MP_CoulumnExtract = EraseNotUsableData(csv_MultifactorProductivity,MP_Contry)
+TIG_CoulumnExtract = DataProcessing(EraseNotUsableData(csv_TrustInGovernment))
+MP_CoulumnExtract = DataProcessing(EraseNotUsableData(csv_MultifactorProductivity))
+GDP_CoulumnExtract = DataProcessing(EraseNotUsableData(csv_GrossDomesticProduct))
+PLI_CoulumnExtract = DataProcessing(EraseNotUsableData(csv_PriceLevelIndices))
+#PLI_CoulumnExtract = DataProcessing(EraseNotUsableData(csv_PriceLevelIndices,PLI_Country))
 
 print(TIG_CoulumnExtract)
 print(MP_CoulumnExtract)
 print(GDP_CoulumnExtract)
 print(PLI_CoulumnExtract)
+
 TIG_CoulumnExtract.to_csv("ProcessingDataset_Trust_in_government.csv",mode='w',index=False)
 MP_CoulumnExtract.to_csv("ProcessingDataset_Multifactor_productivity.csv",mode='w',index=False)
 GDP_CoulumnExtract.to_csv("ProcessingDataset_Gross_domestic_product.csv",mode='w',index=False)
