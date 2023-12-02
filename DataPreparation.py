@@ -6,9 +6,15 @@ def CountryExtractor(ListToExtract):# return(list of country, number of country 
         if not(ListToExtract[i][0] in ListOfCountry):
             ListOfCountry.append(ListToExtract[i][0])
     return (ListOfCountry,len(ListOfCountry))
+def ExtractSameCountry(Target_list):
+    lst = []
+    for i in CountryExtractor(csv_TrustInGovernment_np)[0]:
+        if i in CountryExtractor(Target_list)[0]:
+            lst.append(i)
+    return lst
 csv_TrustInGovernment = pd.read_csv("Dataset_Trust_in_government.csv")
 csv_MultifactorProductivity = pd.read_csv("Dataset_Multifactor_productivity.csv")
-csv_GrossDomesticProduct = pd.read_csv("Dataset_Gross_domestic_product_(GDP).csv")
+csv_GrossDomesticProduct = pd.read_csv("Dataset_Gross_domestic_product.csv")
 csv_PriceLevelIndices = pd.read_csv("Dataset_Price_level_indices.csv")
 #print(csv_TrustInGovernment)
 #print(csv_MultifactorProductivity)
@@ -22,3 +28,7 @@ print(CountryExtractor(csv_TrustInGovernment_np)[1])
 print(CountryExtractor(csv_MultifactorProductivity_np)[1])
 print(CountryExtractor(csv_GrossDomesticProduct_np)[1])
 print(CountryExtractor(csv_PriceLevelIndices_np)[1])
+print("")
+print(CountryExtractor(csv_MultifactorProductivity_np)[1] - len(ExtractSameCountry(csv_MultifactorProductivity_np)))
+print(CountryExtractor(csv_GrossDomesticProduct_np)[1] - len(ExtractSameCountry(csv_GrossDomesticProduct_np)))
+print(CountryExtractor(csv_PriceLevelIndices_np)[1] - len(ExtractSameCountry(csv_PriceLevelIndices_np)))
