@@ -1,5 +1,6 @@
 #python version 3.9.12 64bit
 from ast import Delete
+from operator import index
 from statistics import mode
 import pandas as pd
 import os
@@ -38,7 +39,7 @@ def notNeededCountry(lists):
 
             
 def EraseNotUsableData(PandasData):
-    idx = PandasData[~(PandasData['LOCATION'].isin(TIG_Country))].index
+    idx = PandasData[~(PandasData['LOCATION'].isin(TIG_Country))|((PandasData['TIME'].astype('int')>2022) | (PandasData['TIME'].astype('int')<2006))].index
     pdpd = PandasData.drop(idx,axis=0)
     return pdpd
 
@@ -69,7 +70,7 @@ PLI_Country = CountryExtractor(csv_PriceLevelIndices_np)[0]
 #print(csv_GrossDomesticProduct)
 
 #print(notNeededCountry(GDP_Country))
-
+#print(csv_MultifactorProductivity)
 #delete column except time,location, value
 #TIG_CoulumnExtract = EraseNotUsableData(csv_TrustInGovernment,TIG_Country)
 #MP_CoulumnExtract = EraseNotUsableData(csv_MultifactorProductivity,MP_Contry)
