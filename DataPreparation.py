@@ -1,7 +1,6 @@
 #python version 3.9.12 64bit
 import numpy as np
 import pandas as pd
-import os
 def CountryExtractor(ListToExtract):# return(list of country, number of country included)
     ListOfCountry = []
     for i in range(len(ListToExtract)):
@@ -15,7 +14,7 @@ def ExtractSameCountry(Target_list):# return list of country coexist in TrustInG
             lst.append(i)
     return lst
 def DataProcessing(PandasData):# Delete not using columns
-    lst = ['LOCATION','TIME','Value']
+    lst = ['LOCATION','TIME','Value','Change of Value(%)']
     lstOfColumns = []
     for i in range(len(PandasData.columns)):
         if not(PandasData.columns[i] in lst):
@@ -44,6 +43,12 @@ csv_GrossDomesticProduct = EraseNotUsingDataForGDP(csv_GrossDomesticProduct)
 #print(csv_MultifactorProductivity)
 #print(csv_GrossDomesticProduct)
 #print(csv_PriceLevelIndives)
+
+# adding amount of change column (become zero when current TIME minus 1 is not same to former TIME)
+csv_GrossDomesticProduct['Data before available'] = np.where(csv_GrossDomesticProduct['TIME'].shift() == csv_GrossDomesticProduct['TIME']-1,1,0)
+csv_MultifactorProductivity['Data before available'] = np.where(csv_MultifactorProductivity['TIME'].shift() == csv_MultifactorProductivity['TIME']-1,1,0)
+csv_GrossDomesticProduct['Change of Value(%)'] = 100*csv_GrossDomesticProduct['Data before available']*(csv_GrossDomesticProduct['Value'] - csv_GrossDomesticProduct['Value'].shift(1))/csv_GrossDomesticProduct['Value'].shift(1)
+csv_MultifactorProductivity['Change of Value(%)'] = 100*csv_MultifactorProductivity['Data before available']*(csv_MultifactorProductivity['Value'] - csv_MultifactorProductivity['Value'].shift(1))/csv_MultifactorProductivity['Value'].shift(1)
 
 # pandas to numpy
 csv_TrustInGovernment_np = csv_TrustInGovernment.to_numpy()
